@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library and Bank Account Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .output {
+            white-space: pre-wrap; /* Preserve whitespace for formatted text */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="section">
+        <h2>Library Books</h2>
+        <button onclick="displayAllBooksInfo()">Display All Books Info</button>
+        <button onclick="searchByTitlePrompt()">Search Book by Title</button>
+        <button onclick="searchByAuthorPrompt()">Search Books by Author</button>
+        <button onclick="filterBooksByPages()">Filter Books by Pages</button>
+        <div id="library-output" class="output"></div>
+    </div>
+
+    <div class="section">
+        <h2>Bank Accounts</h2>
+        <button onclick="displayAllAccountsInfo()">Display All Accounts Info</button>
+        <button onclick="calculateInterestForAll()">Calculate Compound Interest for All</button>
+        <div id="accounts-output" class="output"></div>
+    </div>
+
+    <script>
+        // Book constructor function and methods
+        function Book(title, author, pages){
+            this.title = title;
+            this.author = author;
+            this.pages = pages;
+        }
+
+        let library = [];
+
+        let book1 = new Book("book qoute", "somebook", 324);
+        let book2 = new Book("something...", "some author", 311);
+        let book3 = new Book("sumthin else", "another Author", 233);
+        let book4 = new Book("and another one", "one more author", 442);
+
+        library.push(book1, book2, book3, book4);
+
+        Book.prototype.displayInfo = function(){
+            return `Title: ${this.title}\nAuthor: ${this.author}\nNumber of Pages: ${this.pages}\n\n`;
+        }
+
+        function addBook(title, author, pages){
+            let newBook = new Book(title, author, pages);
+            library.push(newBook);
+        }
+
+        function displayAllBooksInfo(){
+            let output = library.map(book => book.displayInfo()).join('');
+            document.getElementById('library-output').textContent = output || 'No books available';
+        }
+
+        function searchByTitle(title){
+            const book = library.find(book => book.title.toLowerCase() === title.toLowerCase());
+            return book ? book.displayInfo() : "Book not recognized";
+        }
+
+        function searchByAuthor(author){
+            const booksByAuthor = library.filter(book => book.author.toLowerCase() === author.toLowerCase());
+            return booksByAuthor.length > 0 ? booksByAuthor.map(book => book.displayInfo()).join('') : "No books found by that author";
+        }
+
+        function filterBooksByPages(){
+            const booksPages = library.filter(book => book.pages < 463);
+            return booksPages.length > 0 ? booksPages.map(book => book.displayInfo()).join('') : "No books with fewer than 463 pages";
+        }
+
+        function searchByTitlePrompt(){
+            const title = prompt("Enter the book title to search:");
+            document.getElementById('library-output').textContent = searchByTitle(title);
+        }
+
+        function searchByAuthorPrompt(){
+            const author = prompt("Enter the author name to search:");
+            document.getElementById('library-output').textContent = searchByAuthor(author);
+        }
+
+        function filterBooksByPages(){
+            document.getElementById('library-output').textContent = filterBooksByPages();
+        }
+
+        // Account constructor function and methods
+        function Account(accountNumber, balance, owner){
+            this.accountNumber = accountNumber;
+            this.balance = balance;
+            this.owner = owner;    
+        }
+
+        let account1 = new Account(5423, 245, "Luffy");
+        let account2 = new Account(5342, 524, "Nami");
+        let account3 = new Account(8224, 8282, "Robin");
+        let account4 = new Account(93432, 234, "Pinky");
+
+        Account.prototype.displayInfo = function(){
+            return `Name: ${this.owner}\nAccount #: ${this.accountNumber}\nCurrent Account Balance: $${this.balance}\n\n`;
+        }
+
+        Account.prototype.deposit = function(amount){
+            if (amount > 0){
+                this.balance += amount;
+                return `$${amount} has been deposited. New Balance: $${this.balance}.`;   
+            } else {
+                return `You can't deposit negative money.`;
+            }
+        }
+
+        Account.prototype.withdrawal = function(amount){
+            if (amount > 0 && amount <= this.balance){
+                this.balance -= amount;
+                return `$${amount} has been withdrawn. New balance: $${this.balance}.`;
+            } else if(amount > this.balance){
+                return `Insufficient funds for this withdrawal.`;        
+            } else {
+                return `Withdrawal amount must be positive.`;
+            }
+        }
+
+        Account.prototype.calculateCompoundInterest = function(years, annualRate){
+            let principal = this.balance;
+            let n = 1;
+            let r = annualRate;
+            let t = years;
+            let amount = principal * Math.pow((1 + (r / n)), (n * t));
+            let roundedAmount = Math.ceil(amount);
+            return `The amount of money accumulated after ${t} years at an annual interest rate of ${r * 100}% is $${roundedAmount}.`;
+        }
+
+        function displayAllAccountsInfo(){
+            let accounts = [account1, account2, account3, account4];
+            let output = accounts.map(account => account.displayInfo()).join('');
+            document.getElementById('accounts-output').textContent = output || 'No accounts available';
+        }
+
+        function calculateInterestForAll(){
+            let accounts = [account1, account2, account3, account4];
+            let output = accounts.map(account => account.calculateCompoundInterest(5, 0.05)).join('\n');
+            document.getElementById('accounts-output').textContent = output || 'No accounts available for interest calculation';
+        }
+
+    </script>
+
+</body>
+</html>
